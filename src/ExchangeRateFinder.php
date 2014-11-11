@@ -38,8 +38,8 @@ class ExchangeRateFinder
      * Fetch and parse Bank Indonesia site for Exchange rates
      *
      * @return Domain\RateInterface[] List of exchange rates
-     * @throws RuntimeException        Connection Error
-     * @throws RuntimeException        Page not found
+     * @throws RuntimeException       Connection Error
+     * @throws RuntimeException       Page not found
      */
     public function findAll()
     {
@@ -61,9 +61,9 @@ class ExchangeRateFinder
     /**
      * Parse html response into exchange rates
      *
-     * @param  string                  $html
+     * @param  string                 $html
      * @return Domain\RateInterface[]
-     * @throws RuntimeException        Page not found
+     * @throws RuntimeException       Page not found
      */
     protected function parse($html)
     {
