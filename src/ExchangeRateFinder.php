@@ -4,6 +4,7 @@ namespace Kuartet\BI\ExchangeRate;
 use \Carbon\Carbon;
 use \GuzzleHttp\ClientInterface;
 use \GuzzleHttp\Exception\TransferException;
+use \RuntimeException;
 use \Symfony\Component\DomCrawler\Crawler;
 
 /**
@@ -48,7 +49,7 @@ class ExchangeRateFinder
             $html = (string) $response->getBody();
             $exchangeRates = $this->parse($html);
         } catch (TransferException $ex) {
-            throw new \RuntimeException('Connection problem', 0, $ex);
+            throw new RuntimeException('Connection problem', 0, $ex);
         }
 
         return $exchangeRates;

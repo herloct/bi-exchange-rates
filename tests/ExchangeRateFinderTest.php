@@ -1,6 +1,7 @@
 <?php
 namespace Kuartet\BI\ExchangeRate;
 
+use \Carbon\Carbon;
 use \GuzzleHttp\Client;
 use \GuzzleHttp\Message\Response;
 use \GuzzleHttp\Stream\Stream;
@@ -37,7 +38,7 @@ class ExchangeRateFinderTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($sell, $rate->getSell());
         $this->assertEquals($buy, $rate->getBuy());
         $this->assertEquals($middle, $rate->getMiddle());
-        $this->assertEquals(\Carbon\Carbon::parse($updatedAt), $rate->getUpdatedAt());
+        $this->assertEquals(Carbon::parse($updatedAt), $rate->getUpdatedAt());
     }
 
     public function dataProviderTestFindAll()
