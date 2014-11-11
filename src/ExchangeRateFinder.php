@@ -69,7 +69,7 @@ class ExchangeRateFinder
         $updatedAt = $this->parseLastUpdated($crawler);
 
         $that = $this;
-        $crawler->filter('#ctl00_PlaceHolderMain_biWebKursTransaksiBI_GridView2 > tbody > tr')
+        $crawler->filter('#ctl00_PlaceHolderMain_biWebKursTransaksiBI_GridView2 > tr')
             ->each(function (Crawler $tr, $i) use ($that, &$exchangeRates, $codes, $updatedAt) {
                 if ($i > 0) {
                     $parts = [];
@@ -113,7 +113,7 @@ class ExchangeRateFinder
     protected function parseCurrencyCodeAndNames(Crawler $crawler)
     {
         $codes = [];
-        $crawler->filter('#KodeSingkatan > div > table > tbody > tr')
+        $crawler->filter('#KodeSingkatan > div > table > tr')
             ->each(function (Crawler $tr, $i) use (&$codes) {
                 if ($i > 0) {
                     $parts = [];
