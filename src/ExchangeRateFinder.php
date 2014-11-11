@@ -38,19 +38,22 @@ class ExchangeRateFinder
      * Fetch and parse Bank Indonesia site for Exchange rates
      *
      * @return ExchangeRateInterface[] List of exchange rates
+     * @throws RuntimeException        Connection Error
+     * @throws RuntimeException        Page not found
      */
     public function findAll()
     {
-        $exchangeRates = [];
+        $html = null;
 
         try {
             $response = $this->client->get(self::BASE_URL);
 
             $html = (string) $response->getBody();
-            $exchangeRates = $this->parse($html);
         } catch (TransferException $ex) {
             throw new RuntimeException('Connection problem', 0, $ex);
         }
+
+        $exchangeRates = $this->parse($html);
 
         return $exchangeRates;
     }
@@ -60,10 +63,16 @@ class ExchangeRateFinder
      *
      * @param  string                  $html
      * @return ExchangeRateInterface[]
+     * @throws RuntimeException        Page not found
      */
     protected function parse($html)
     {
         $exchangeRates = [];
+
+        if (mb_ereg("Sorry, the page you're looking for is not available", $html) !== false) {
+            throw new \RuntimeException('Page not found', 1);
+        }
+
         $crawler = new Crawler($html);
         $codes = $this->parseCurrencyCodeAndNames($crawler);
         $updatedAt = $this->parseLastUpdated($crawler);
