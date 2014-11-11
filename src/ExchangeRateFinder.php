@@ -1,5 +1,5 @@
 <?php
-namespace Kuartet\BI\ExchangeRate;
+namespace Kuartet\BI;
 
 use \Carbon\Carbon;
 use \GuzzleHttp\ClientInterface;
@@ -37,20 +37,23 @@ class ExchangeRateFinder
     /**
      * Fetch and parse Bank Indonesia site for Exchange rates
      *
-     * @return ExchangeRateInterface[] List of exchange rates
+     * @return Domain\RateInterface[] List of exchange rates
+     * @throws RuntimeException        Connection Error
+     * @throws RuntimeException        Page not found
      */
     public function findAll()
     {
-        $exchangeRates = [];
+        $html = null;
 
         try {
             $response = $this->client->get(self::BASE_URL);
 
             $html = (string) $response->getBody();
-            $exchangeRates = $this->parse($html);
         } catch (TransferException $ex) {
             throw new RuntimeException('Connection problem', 0, $ex);
         }
+
+        $exchangeRates = $this->parse($html);
 
         return $exchangeRates;
     }
@@ -59,11 +62,17 @@ class ExchangeRateFinder
      * Parse html response into exchange rates
      *
      * @param  string                  $html
-     * @return ExchangeRateInterface[]
+     * @return Domain\RateInterface[]
+     * @throws RuntimeException        Page not found
      */
     protected function parse($html)
     {
         $exchangeRates = [];
+
+        if (mb_ereg("Sorry, the page you're looking for is not available", $html) !== false) {
+            throw new \RuntimeException('Page not found', 1);
+        }
+
         $crawler = new Crawler($html);
         $codes = $this->parseCurrencyCodeAndNames($crawler);
         $updatedAt = $this->parseLastUpdated($crawler);
@@ -82,7 +91,7 @@ class ExchangeRateFinder
                     $value = $that->getFloatFromString($parts[1]);
                     $sell = $that->getFloatFromString($parts[2]) / $value;
                     $buy = $that->getFloatFromString($parts[3]) / $value;
-                    $exchangeRates[] = new ExchangeRate($code, $name, $sell, $buy, $updatedAt);
+                    $exchangeRates[] = new Domain\Rate($code, $name, $sell, $buy, $updatedAt);
                 }
             });
 

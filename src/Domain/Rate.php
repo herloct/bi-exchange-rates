@@ -1,5 +1,5 @@
 <?php
-namespace Kuartet\BI\ExchangeRate;
+namespace Kuartet\BI\Domain;
 
 use \Carbon\Carbon;
 
@@ -8,7 +8,7 @@ use \Carbon\Carbon;
  *
  * @author herloct <herloct@gmail.com>
  */
-class ExchangeRate implements ExchangeRateInterface
+class Rate implements RateInterface
 {
     /**
      * @var string
