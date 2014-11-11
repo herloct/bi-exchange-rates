@@ -1,5 +1,5 @@
 <?php
-namespace Kuartet\BI\ExchangeRate;
+namespace Kuartet\BI;
 
 use \Carbon\Carbon;
 use \GuzzleHttp\Client;
@@ -28,7 +28,7 @@ class ExchangeRateFinderTest extends PHPUnit_Framework_TestCase
         $exchangeRates = $finder->findAll();
 
         $this->assertInternalType('array', $exchangeRates);
-        $this->assertContainsOnlyInstancesOf(ExchangeRateInterface::class, $exchangeRates);
+        $this->assertContainsOnlyInstancesOf(Domain\RateInterface::class, $exchangeRates);
         $this->assertCount(22, $exchangeRates);
 
         // Check AUD

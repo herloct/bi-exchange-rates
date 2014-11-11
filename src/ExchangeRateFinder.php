@@ -1,5 +1,5 @@
 <?php
-namespace Kuartet\BI\ExchangeRate;
+namespace Kuartet\BI;
 
 use \Carbon\Carbon;
 use \GuzzleHttp\ClientInterface;
@@ -37,7 +37,7 @@ class ExchangeRateFinder
     /**
      * Fetch and parse Bank Indonesia site for Exchange rates
      *
-     * @return ExchangeRateInterface[] List of exchange rates
+     * @return Domain\RateInterface[] List of exchange rates
      * @throws RuntimeException        Connection Error
      * @throws RuntimeException        Page not found
      */
@@ -62,7 +62,7 @@ class ExchangeRateFinder
      * Parse html response into exchange rates
      *
      * @param  string                  $html
-     * @return ExchangeRateInterface[]
+     * @return Domain\RateInterface[]
      * @throws RuntimeException        Page not found
      */
     protected function parse($html)
@@ -91,7 +91,7 @@ class ExchangeRateFinder
                     $value = $that->getFloatFromString($parts[1]);
                     $sell = $that->getFloatFromString($parts[2]) / $value;
                     $buy = $that->getFloatFromString($parts[3]) / $value;
-                    $exchangeRates[] = new ExchangeRate($code, $name, $sell, $buy, $updatedAt);
+                    $exchangeRates[] = new Domain\Rate($code, $name, $sell, $buy, $updatedAt);
                 }
             });
 

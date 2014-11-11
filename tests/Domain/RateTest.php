@@ -1,10 +1,10 @@
 <?php
-namespace Kuartet\BI\ExchangeRate;
+namespace Kuartet\BI\Domain;
 
 use \Carbon\Carbon;
 use \PHPUnit_Framework_TestCase;
 
-class ExchangeRateTest extends PHPUnit_Framework_TestCase
+class RateTest extends PHPUnit_Framework_TestCase
 {
     public function testConstructor()
     {
@@ -15,8 +15,8 @@ class ExchangeRateTest extends PHPUnit_Framework_TestCase
         $middle = 10500;
         $updatedAt = Carbon::now();
 
-        $exchangeRate = new ExchangeRate($code, $name, $sell, $buy, $updatedAt);
-        $this->assertInstanceOf('Kuartet\BI\ExchangeRate\ExchangeRateInterface', $exchangeRate);
+        $exchangeRate = new Rate($code, $name, $sell, $buy, $updatedAt);
+        $this->assertInstanceOf('Kuartet\BI\Domain\RateInterface', $exchangeRate);
         $this->assertEquals($code, $exchangeRate->getCode());
         $this->assertEquals($name, $exchangeRate->getName());
         $this->assertEquals($sell, $exchangeRate->getSell());

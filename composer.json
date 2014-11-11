@@ -23,7 +23,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Kuartet\\BI\\ExchangeRate\\": "src/"
+            "Kuartet\\BI\\": "src/"
         }
     }
 }
