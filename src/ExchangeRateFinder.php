@@ -14,6 +14,11 @@ use \Symfony\Component\DomCrawler\Crawler;
 class ExchangeRateFinder
 {
     /**
+     * Bank Indonesia exchange rates URL
+     */
+    const BASE_URL = 'http://www.bi.go.id/en/moneter/informasi-kurs/transaksi-bi/Default.aspx';
+
+    /**
      *
      * @var ClientInterface
      */
@@ -38,7 +43,7 @@ class ExchangeRateFinder
         $exchangeRates = [];
 
         try {
-            $response = $this->client->get();
+            $response = $this->client->get(self::BASE_URL);
 
             $html = (string) $response->getBody();
             $exchangeRates = $this->parse($html);
