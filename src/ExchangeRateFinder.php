@@ -52,9 +52,9 @@ class ExchangeRateFinder
     protected function parse($html)
     {
         $exchangeRates = [];
-        $codes = $this->parseCurrencyCodeAndNames($html);
-        $updatedAt = $this->parseLastUpdated($html);
         $crawler = new Crawler($html);
+        $codes = $this->parseCurrencyCodeAndNames($crawler);
+        $updatedAt = $this->parseLastUpdated($crawler);
 
         $that = $this;
         $crawler->filter('#ctl00_PlaceHolderMain_biWebKursTransaksiBI_GridView2 > tbody > tr')
@@ -79,10 +79,8 @@ class ExchangeRateFinder
         return $exchangeRates;
     }
 
-    protected function parseLastUpdated($html)
+    protected function parseLastUpdated(Crawler $crawler)
     {
-        $crawler = new Crawler($html);
-
         $raw = $crawler->filter('#ctl00_PlaceHolderMain_biWebKursTransaksiBI_lblUpdate')
             ->text();
         $updatedAt = Carbon::parse($raw);
@@ -90,11 +88,9 @@ class ExchangeRateFinder
         return $updatedAt;
     }
 
-    protected function parseCurrencyCodeAndNames($html)
+    protected function parseCurrencyCodeAndNames(Crawler $crawler)
     {
         $codes = [];
-        $crawler = new Crawler($html);
-
         $crawler->filter('#KodeSingkatan > div > table > tbody > tr')
             ->each(function(Crawler $tr, $i) use(&$codes)
             {
