@@ -55,6 +55,12 @@ class ExchangeRateFinder
         return $exchangeRates;
     }
 
+    /**
+     * Parse html response into exchange rates
+     *
+     * @param string $html
+     * @return ExchangeRateInterface[]
+     */
     protected function parse($html)
     {
         $exchangeRates = [];
@@ -85,6 +91,12 @@ class ExchangeRateFinder
         return $exchangeRates;
     }
 
+    /**
+     * Find last updated info from html
+     *
+     * @param Crawler $crawler
+     * @return Carbon
+     */
     protected function parseLastUpdated(Crawler $crawler)
     {
         $raw = $crawler->filter('#ctl00_PlaceHolderMain_biWebKursTransaksiBI_lblUpdate')
@@ -94,6 +106,12 @@ class ExchangeRateFinder
         return $updatedAt;
     }
 
+    /**
+     * Find array of currency code and name
+     *
+     * @param Crawler $crawler
+     * @return array Currency code as key, currency name as value
+     */
     protected function parseCurrencyCodeAndNames(Crawler $crawler)
     {
         $codes = [];
@@ -116,6 +134,12 @@ class ExchangeRateFinder
         return $codes;
     }
 
+    /**
+     * Parse string to float
+     *
+     * @param string $source
+     * @return float
+     */
     protected function getFloatFromString($source)
     {
         return floatval(mb_ereg_replace(',', '', $source));
