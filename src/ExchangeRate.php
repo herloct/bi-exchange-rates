@@ -45,14 +45,14 @@ class ExchangeRate implements ExchangeRateInterface
     }
 
     /**
-     * @var double
+     * @var float
      */
     private $sell;
 
     /**
      * Get sell value
      *
-     * @return double
+     * @return float
      */
     public function getSell()
     {
@@ -60,14 +60,14 @@ class ExchangeRate implements ExchangeRateInterface
     }
 
     /**
-     * @var double
+     * @var float
      */
     private $buy;
 
     /**
      * Get buy value
      *
-     * @return double
+     * @return float
      */
     public function getBuy()
     {
@@ -77,7 +77,7 @@ class ExchangeRate implements ExchangeRateInterface
     /**
      * Get middle value
      *
-     * @return double
+     * @return float
      */
     public function getMiddle()
     {
@@ -104,8 +104,8 @@ class ExchangeRate implements ExchangeRateInterface
      *
      * @param string $code      Currency code
      * @param string $name      Currency name
-     * @param double $sell      Sell value
-     * @param double $buy       Buy value
+     * @param float $sell      Sell value
+     * @param float $buy       Buy value
      * @param Carbon $updatedAt Updated at
      */
     public function __construct($code, $name, $sell, $buy, Carbon $updatedAt)

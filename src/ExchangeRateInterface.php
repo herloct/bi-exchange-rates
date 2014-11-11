@@ -31,21 +31,21 @@ interface ExchangeRateInterface
     /**
      * Get sell value
      *
-     * @return double
+     * @return float
      */
     function getSell();
 
     /**
      * Get buy value
      *
-     * @return double
+     * @return float
      */
     function getBuy();
 
     /**
      * Get middle value
      *
-     * @return double
+     * @return float
      */
     function getMiddle();
 

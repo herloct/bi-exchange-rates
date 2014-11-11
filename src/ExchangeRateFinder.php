@@ -74,9 +74,9 @@ class ExchangeRateFinder
 
                     $code = trim($parts[0]);
                     $name = $codes[$code];
-                    $value = $that->getDoubleFromString($parts[1]);
-                    $sell = $that->getDoubleFromString($parts[2]) / $value;
-                    $buy = $that->getDoubleFromString($parts[3]) / $value;
+                    $value = $that->getFloatFromString($parts[1]);
+                    $sell = $that->getFloatFromString($parts[2]) / $value;
+                    $buy = $that->getFloatFromString($parts[3]) / $value;
                     $exchangeRates[] = new ExchangeRate($code, $name, $sell, $buy, $updatedAt);
                 }
             });
@@ -115,7 +115,7 @@ class ExchangeRateFinder
         return $codes;
     }
 
-    protected function getDoubleFromString($source)
+    protected function getFloatFromString($source)
     {
         return floatval(mb_ereg_replace(',', '', $source));
     }
