@@ -49,4 +49,49 @@ class ExchangeRateFinderTest extends PHPUnit_Framework_TestCase
             [21, 'USD', 'US DOLLAR', 12224.00, 12102.00, (12224.00 + 12102.00) / 2, '11 November 2014']
         ];
     }
+
+    /**
+     * @expectedException \RuntimeException
+     */
+    public function testFindAllPageNotFound()
+    {
+        $responseBody = file_get_contents(__DIR__.'/resources/finder_findAll_not_found.html');
+
+        $mock = new Mock([
+            new Response(200, [], Stream::factory($responseBody))
+        ]);
+
+        $client = new Client();
+        $client->getEmitter()->attach($mock);
+
+        $finder = new ExchangeRateFinder($client);
+        $finder->findAll();
+    }
+
+    /**
+     * @dataProvider dataProviderTestFindAllWithConnectionProblem
+     * @expectedException \RuntimeException
+     */
+    public function testFindAllWithConnectionProblem($responses)
+    {
+        $mock = new Mock($responses);
+
+        $client = new Client();
+        $client->getEmitter()->attach($mock);
+
+        $finder = new ExchangeRateFinder($client);
+        $finder->findAll();
+    }
+
+    public function dataProviderTestFindAllWithConnectionProblem()
+    {
+        return [
+            [[new Response(503)]],
+            [[new Response(500)]],
+            [[new Response(404)]],
+            [[new Response(403)]],
+            [[new Response(401)]],
+            [[]]
+        ];
+    }
 }
