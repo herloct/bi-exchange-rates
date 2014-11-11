@@ -58,7 +58,7 @@ class ExchangeRateFinder
     /**
      * Parse html response into exchange rates
      *
-     * @param string $html
+     * @param  string                  $html
      * @return ExchangeRateInterface[]
      */
     protected function parse($html)
@@ -70,12 +70,10 @@ class ExchangeRateFinder
 
         $that = $this;
         $crawler->filter('#ctl00_PlaceHolderMain_biWebKursTransaksiBI_GridView2 > tbody > tr')
-            ->each(function(Crawler $tr, $i) use($that, &$exchangeRates, $codes, $updatedAt)
-            {
+            ->each(function (Crawler $tr, $i) use ($that, &$exchangeRates, $codes, $updatedAt) {
                 if ($i > 0) {
                     $parts = [];
-                    $tr->filter('td')->each(function($td, $j) use(&$parts, $codes)
-                    {
+                    $tr->filter('td')->each(function ($td, $j) use (&$parts, $codes) {
                         $parts[] = $td->text();
                     });
 
@@ -94,7 +92,7 @@ class ExchangeRateFinder
     /**
      * Find last updated info from html
      *
-     * @param Crawler $crawler
+     * @param  Crawler $crawler
      * @return Carbon
      */
     protected function parseLastUpdated(Crawler $crawler)
@@ -109,19 +107,17 @@ class ExchangeRateFinder
     /**
      * Find array of currency code and name
      *
-     * @param Crawler $crawler
-     * @return array Currency code as key, currency name as value
+     * @param  Crawler $crawler
+     * @return array   Currency code as key, currency name as value
      */
     protected function parseCurrencyCodeAndNames(Crawler $crawler)
     {
         $codes = [];
         $crawler->filter('#KodeSingkatan > div > table > tbody > tr')
-            ->each(function(Crawler $tr, $i) use(&$codes)
-            {
+            ->each(function (Crawler $tr, $i) use (&$codes) {
                 if ($i > 0) {
                     $parts = [];
-                    $tr->filter('td')->each(function($td, $j) use(&$parts)
-                    {
+                    $tr->filter('td')->each(function ($td, $j) use (&$parts) {
                         $parts[] = $td->text();
                     });
 
@@ -137,7 +133,7 @@ class ExchangeRateFinder
     /**
      * Parse string to float
      *
-     * @param string $source
+     * @param  string $source
      * @return float
      */
     protected function getFloatFromString($source)

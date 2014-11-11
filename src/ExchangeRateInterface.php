@@ -17,7 +17,7 @@ interface ExchangeRateInterface
      *
      * @return string
      */
-    function getCode();
+    public function getCode();
 
     /**
      * Get currency name
@@ -26,33 +26,33 @@ interface ExchangeRateInterface
      *
      * @return string
      */
-    function getName();
+    public function getName();
 
     /**
      * Get sell value
      *
      * @return float
      */
-    function getSell();
+    public function getSell();
 
     /**
      * Get buy value
      *
      * @return float
      */
-    function getBuy();
+    public function getBuy();
 
     /**
      * Get middle value
      *
      * @return float
      */
-    function getMiddle();
+    public function getMiddle();
 
     /**
      * Get updated at
      *
      * @return Carbon
      */
-    function getUpdatedAt();
+    public function getUpdatedAt();
 }

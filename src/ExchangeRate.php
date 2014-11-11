@@ -104,8 +104,8 @@ class ExchangeRate implements ExchangeRateInterface
      *
      * @param string $code      Currency code
      * @param string $name      Currency name
-     * @param float $sell      Sell value
-     * @param float $buy       Buy value
+     * @param float  $sell      Sell value
+     * @param float  $buy       Buy value
      * @param Carbon $updatedAt Updated at
      */
     public function __construct($code, $name, $sell, $buy, Carbon $updatedAt)
