@@ -14,7 +14,7 @@ class ExchangeRateFinderTest extends PHPUnit_Framework_TestCase
         $responseBody = file_get_contents(__DIR__.'/resources/finder_findAll.html');
 
         $mock = new Mock([
-            new Response(200, Stream::factory($responseBody))
+            new Response(200, [], Stream::factory($responseBody))
         ]);
 
         $client = new Client();
@@ -23,7 +23,7 @@ class ExchangeRateFinderTest extends PHPUnit_Framework_TestCase
         $finder = new ExchangeRateFinder($client);
         $exchangeRates = $finder->findAll();
 
-        $this->assertNotInternalType('array', $exchangeRates);
+        $this->assertInternalType('array', $exchangeRates);
         $this->assertContainsOnlyInstancesOf(ExchangeRateInterface::class, $exchangeRates);
         $this->assertCount(22, $exchangeRates);
     }
