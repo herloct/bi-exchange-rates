@@ -53,10 +53,12 @@ class ExchangeRateFinder
     {
         $exchangeRates = [];
         $codes = $this->parseCurrencyCodeAndNames($html);
+        $updatedAt = $this->parseLastUpdated($html);
         $crawler = new Crawler($html);
 
-        $crawler->filter('#ctl00_PlaceHolderMain_biWebKursTransaksiBI_GridView1 > tbody > tr')
-            ->each(function(Crawler $tr, $i) use(&$exchangeRates, $codes)
+        $that = $this;
+        $crawler->filter('#ctl00_PlaceHolderMain_biWebKursTransaksiBI_GridView2 > tbody > tr')
+            ->each(function(Crawler $tr, $i) use($that, &$exchangeRates, $codes, $updatedAt)
             {
                 if ($i > 0) {
                     $parts = [];
@@ -67,14 +69,25 @@ class ExchangeRateFinder
 
                     $code = trim($parts[0]);
                     $name = $codes[$code];
-                    $value = floatval($parts[1]);
-                    $sell = floatval($parts[2]) / $value;
-                    $buy = floatval($parts[3]) / $value;
-                    $exchangeRates[] = new ExchangeRate($code, $name, $sell, $buy, Carbon::now());
+                    $value = $that->getDoubleFromString($parts[1]);
+                    $sell = $that->getDoubleFromString($parts[2]) / $value;
+                    $buy = $that->getDoubleFromString($parts[3]) / $value;
+                    $exchangeRates[] = new ExchangeRate($code, $name, $sell, $buy, $updatedAt);
                 }
             });
 
         return $exchangeRates;
+    }
+
+    protected function parseLastUpdated($html)
+    {
+        $crawler = new Crawler($html);
+
+        $raw = $crawler->filter('#ctl00_PlaceHolderMain_biWebKursTransaksiBI_lblUpdate')
+            ->text();
+        $updatedAt = Carbon::parse($raw);
+
+        return $updatedAt;
     }
 
     protected function parseCurrencyCodeAndNames($html)
@@ -99,5 +112,10 @@ class ExchangeRateFinder
             });
 
         return $codes;
+    }
+
+    protected function getDoubleFromString($source)
+    {
+        return floatval(mb_ereg_replace(',', '', $source));
     }
 }
