@@ -15,12 +15,12 @@ class ExchangeRateTest extends PHPUnit_Framework_TestCase
         $middle = 10500;
         $updatedAt = Carbon::now();
 
-        $exchangeRate = new ExchangeRate($code, $name, $sell, $buy, $middle, $updatedAt);
+        $exchangeRate = new ExchangeRate($code, $name, $sell, $buy, $updatedAt);
         $this->assertInstanceOf('Kuartet\BI\ExchangeRate\ExchangeRateInterface', $exchangeRate);
         $this->assertEquals($code, $exchangeRate->getCode());
         $this->assertEquals($name, $exchangeRate->getName());
         $this->assertEquals($sell, $exchangeRate->getSell());
-        $this->assertEquals($but, $exchangeRate->getBuy());
+        $this->assertEquals($buy, $exchangeRate->getBuy());
         $this->assertEquals($middle, $exchangeRate->getMiddle());
         $this->assertEquals($updatedAt, $exchangeRate->getUpdatedAt());
     }
