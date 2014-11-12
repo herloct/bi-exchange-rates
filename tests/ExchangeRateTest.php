@@ -8,12 +8,12 @@ use \GuzzleHttp\Stream\Stream;
 use \GuzzleHttp\Subscriber\Mock;
 use \PHPUnit_Framework_TestCase;
 
-class ExchangeRateFinderTest extends PHPUnit_Framework_TestCase
+class ExchangeRateTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * @dataProvider dataProviderTestFindAll
+     * @dataProvider dataProviderTestGetUpdates
      */
-    public function testFindAll($index, $code, $name, $sell, $buy, $middle, $updatedAt)
+    public function testGetUpdates($index, $code, $name, $sell, $buy, $middle, $updatedAt)
     {
         $responseBody = file_get_contents(__DIR__.'/resources/finder_findAll.html');
 
@@ -24,15 +24,14 @@ class ExchangeRateFinderTest extends PHPUnit_Framework_TestCase
         $client = new Client();
         $client->getEmitter()->attach($mock);
 
-        $finder = new ExchangeRateFinder($client);
-        $exchangeRates = $finder->findAll();
+        $exchangeRate = new ExchangeRate($client);
+        $rates = $exchangeRate->getUpdates();
 
-        $this->assertInternalType('array', $exchangeRates);
-        $this->assertContainsOnlyInstancesOf(Domain\RateInterface::class, $exchangeRates);
-        $this->assertCount(22, $exchangeRates);
+        $this->assertInternalType('array', $rates);
+        $this->assertContainsOnlyInstancesOf(Domain\RateInterface::class, $rates);
+        $this->assertCount(22, $rates);
 
-        // Check AUD
-        $rate = $exchangeRates[$index];
+        $rate = $rates[$index];
         $this->assertEquals($code, $rate->getCode());
         $this->assertEquals($name, $rate->getName());
         $this->assertEquals($sell, $rate->getSell());
@@ -41,7 +40,7 @@ class ExchangeRateFinderTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(Carbon::parse($updatedAt), $rate->getUpdatedAt());
     }
 
-    public function dataProviderTestFindAll()
+    public function dataProviderTestGetUpdates()
     {
         return [
             [0, 'AUD', 'AUSTRALIAN DOLLAR', 10571.32, 10460.97, (10571.32 + 10460.97) / 2, '11 November 2014'],
@@ -53,7 +52,7 @@ class ExchangeRateFinderTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException \RuntimeException
      */
-    public function testFindAllPageNotFound()
+    public function testGetUpdatesWithPageNotFound()
     {
         $responseBody = file_get_contents(__DIR__.'/resources/finder_findAll_not_found.html');
 
@@ -64,26 +63,26 @@ class ExchangeRateFinderTest extends PHPUnit_Framework_TestCase
         $client = new Client();
         $client->getEmitter()->attach($mock);
 
-        $finder = new ExchangeRateFinder($client);
-        $finder->findAll();
+        $exchangeRate = new ExchangeRate($client);
+        $exchangeRate->getUpdates();
     }
 
     /**
-     * @dataProvider dataProviderTestFindAllWithConnectionProblem
+     * @dataProvider dataProviderTestGetUpdatesWithConnectionProblem
      * @expectedException \RuntimeException
      */
-    public function testFindAllWithConnectionProblem($responses)
+    public function testGetUpdatesWithConnectionProblem($responses)
     {
         $mock = new Mock($responses);
 
         $client = new Client();
         $client->getEmitter()->attach($mock);
 
-        $finder = new ExchangeRateFinder($client);
-        $finder->findAll();
+        $exchangeRate = new ExchangeRate($client);
+        $exchangeRate->getUpdates();
     }
 
-    public function dataProviderTestFindAllWithConnectionProblem()
+    public function dataProviderTestGetUpdatesWithConnectionProblem()
     {
         return [
             [[new Response(503)]],

@@ -8,11 +8,11 @@ use \RuntimeException;
 use \Symfony\Component\DomCrawler\Crawler;
 
 /**
- * Parse exchange rates from Bank Indonesia
+ * Fetch and Parse exchange rates from Bank Indonesia
  *
  * @author herloct <herloct@gmail.com>
  */
-class ExchangeRateFinder
+class ExchangeRate
 {
     /**
      * Bank Indonesia exchange rates URL
@@ -41,7 +41,7 @@ class ExchangeRateFinder
      * @throws RuntimeException       Connection Error
      * @throws RuntimeException       Page not found
      */
-    public function findAll()
+    public function getUpdates()
     {
         $html = null;
 
