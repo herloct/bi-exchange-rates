@@ -1,0 +1,20 @@
+# BI Exchange Rates
+
+Bank Indonesia exchange rates wrapper for PHP.
+
+Basic usage:
+```php
+use \Kuartet\BI\ExchangeRate;
+use \Kuartet\BI\Fetcher\Exception\ConnectionException;
+use \Kuartet\BI\Parser\Exception\ParseException;
+
+try {
+	$exchangeRate = new ExchangeRate();
+	$rates = $exchangeRate->getUpdates();
+	var_dump($rates);
+} catch (ConnectionException $ex) {
+    // Do something for connection error, http code 5xx, 4xx
+} catch (ParseException $ex) {
+	// Do something for parsing error
+}
+```
