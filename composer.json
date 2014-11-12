@@ -1,6 +1,6 @@
 {
     "name": "kuartet/bi-exchange-rates",
-    "description": "BI exchange rates wrapper for PHP",
+    "description": "Bank Indonesia exchange rates wrapper for PHP",
     "keywords": ["bank indonesia", "kurs", "exchange rates"],
     "authors": [
         {
