@@ -1,6 +1,7 @@
 {
     "name": "kuartet/bi-exchange-rates",
     "description": "BI exchange rates wrapper for PHP",
+    "keywords": ["bank indonesia", "kurs", "exchange rates"],
     "authors": [
         {
             "name": "herloct",
@@ -24,6 +25,11 @@
     "autoload": {
         "psr-4": {
             "Kuartet\\BI\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Kuartet\\BI\\": "tests/"
         }
     }
 }
