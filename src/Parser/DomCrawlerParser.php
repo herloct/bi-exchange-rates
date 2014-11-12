@@ -61,7 +61,7 @@ class DomCrawlerParser implements ParserInterface
      * @param  Crawler $crawler
      * @return array   Currency code as key, currency name as value
      */
-    protected function parseCurrencyCodeAndNames(Crawler $crawler)
+    private function parseCurrencyCodeAndNames(Crawler $crawler)
     {
         $codes = [];
         $crawler->filter('#KodeSingkatan > div > table > tr')
@@ -87,7 +87,7 @@ class DomCrawlerParser implements ParserInterface
      * @param  Crawler $crawler
      * @return Carbon
      */
-    protected function parseLastUpdated(Crawler $crawler)
+    private function parseLastUpdated(Crawler $crawler)
     {
         $raw = $crawler->filter('#ctl00_PlaceHolderMain_biWebKursTransaksiBI_lblUpdate')
             ->text();
@@ -102,7 +102,7 @@ class DomCrawlerParser implements ParserInterface
      * @param  string $source
      * @return float
      */
-    protected function parseFloat($source)
+    private function parseFloat($source)
     {
         return floatval(mb_ereg_replace(',', '', $source));
     }
