@@ -32,7 +32,9 @@ class ExchangeRateTest extends PHPUnit_Framework_TestCase
             ->method('parse')
             ->willReturn($expectedRates);
 
-        $exchangeRate = new ExchangeRate($fetcher, $parser);
+        $exchangeRate = new ExchangeRate();
+        $exchangeRate->setFetcher($fetcher)
+            ->setParser($parser);
         $rates = $exchangeRate->getUpdates();
 
         $this->assertEquals($expectedRates, $rates);
