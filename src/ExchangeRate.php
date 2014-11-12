@@ -33,7 +33,7 @@ class ExchangeRate
      * Constructor
      *
      * @param FetcherInterface $fetcher URL fetcher
-     * @param ParserInterface $parser HTML parser
+     * @param ParserInterface  $parser  HTML parser
      */
     public function __construct(FetcherInterface $fetcher, ParserInterface $parser)
     {
