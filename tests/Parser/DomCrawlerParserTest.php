@@ -39,4 +39,21 @@ class DomCrawlerParserTest extends PHPUnit_Framework_TestCase
             [21, 'USD', 'US DOLLAR', 12224.00, 12102.00, (12224.00 + 12102.00) / 2, '11 November 2014']
         ];
     }
+
+    /**
+     * @dataProvider dataProviderTestParseWithInvalidHtml
+     * @expectedException \Kuartet\BI\Parser\Exception\ParseException
+     */
+    public function testParseWithInvalidHtml($html)
+    {
+        $parser = new DomCrawlerParser();
+        $parser->parse($html);
+    }
+
+    public function dataProviderTestParseWithInvalidHtml()
+    {
+        return [
+            [file_get_contents(__DIR__.'/../resources/finder_findAll_not_found.html')]
+        ];
+    }
 }
