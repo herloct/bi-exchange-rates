@@ -2,8 +2,10 @@
 namespace Kuartet\BI\Parser;
 
 use \Carbon\Carbon;
+use \InvalidArgumentException;
 use \Kuartet\BI\Domain\Rate;
 use \Kuartet\BI\Domain\RateInterface;
+use \Kuartet\BI\Parser\Exception\ParseException;
 use \Symfony\Component\DomCrawler\Crawler;
 
 /**
@@ -18,32 +20,37 @@ class DomCrawlerParser implements ParserInterface
      *
      * @param  string          $html HTML to parse
      * @return RateInterface[] Array of rates
+     * @throws ParseException  Invalid HTML source
      */
     public function parse($html)
     {
         $exchangeRates = [];
 
-        $crawler = new Crawler($html);
-        $codes = $this->parseCurrencyCodeAndNames($crawler);
-        $updatedAt = $this->parseLastUpdated($crawler);
+        try {
+            $crawler = new Crawler($html);
+            $codes = $this->parseCurrencyCodeAndNames($crawler);
+            $updatedAt = $this->parseLastUpdated($crawler);
 
-        $that = $this;
-        $crawler->filter('#ctl00_PlaceHolderMain_biWebKursTransaksiBI_GridView2 > tr')
-            ->each(function (Crawler $tr, $i) use ($that, &$exchangeRates, $codes, $updatedAt) {
-                if ($i > 0) {
-                    $parts = [];
-                    $tr->filter('td')->each(function ($td, $j) use (&$parts, $codes) {
-                        $parts[] = $td->text();
-                    });
+            $that = $this;
+            $crawler->filter('#ctl00_PlaceHolderMain_biWebKursTransaksiBI_GridView2 > tr')
+                ->each(function (Crawler $tr, $i) use ($that, &$exchangeRates, $codes, $updatedAt) {
+                    if ($i > 0) {
+                        $parts = [];
+                        $tr->filter('td')->each(function ($td, $j) use (&$parts, $codes) {
+                            $parts[] = $td->text();
+                        });
 
-                    $code = trim($parts[0]);
-                    $name = $codes[$code];
-                    $value = $that->parseFloat($parts[1]);
-                    $sell = $that->parseFloat($parts[2]) / $value;
-                    $buy = $that->parseFloat($parts[3]) / $value;
-                    $exchangeRates[] = new Rate($code, $name, $sell, $buy, $updatedAt);
-                }
-            });
+                        $code = trim($parts[0]);
+                        $name = $codes[$code];
+                        $value = $that->parseFloat($parts[1]);
+                        $sell = $that->parseFloat($parts[2]) / $value;
+                        $buy = $that->parseFloat($parts[3]) / $value;
+                        $exchangeRates[] = new Rate($code, $name, $sell, $buy, $updatedAt);
+                    }
+                });
+        } catch (InvalidArgumentException $ex) {
+            throw new ParseException('Invalid HTML source', $ex);
+        }
 
         return $exchangeRates;
     }
