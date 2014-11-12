@@ -20,10 +20,41 @@ class GuzzleFetcherTest extends PHPUnit_Framework_TestCase
         $client = new Client();
         $client->getEmitter()->attach($mock);
 
+        $url = 'http://domain.com';
+
         $fetcher = new GuzzleFetcher($client);
-        $html = $fetcher->fetch('someurl');
+        $html = $fetcher->fetch($url);
 
         $this->assertInstanceOf('Kuartet\BI\Fetcher\FetcherInterface', $fetcher);
         $this->assertEquals($responseBody, $html);
+    }
+
+    /**
+     * @dataProvider dataProviderTestFetchWithConnectionProblem
+     * @expectedException \Kuartet\BI\Fetcher\Exception\ConnectionException
+     */
+    public function testFetchWithConnectionProblem($responses)
+    {
+        $mock = new Mock($responses);
+
+        $client = new Client();
+        $client->getEmitter()->attach($mock);
+
+        $url = 'http://domain.com';
+
+        $fetcher = new GuzzleFetcher($client);
+        $fetcher->fetch($url);
+    }
+
+    public function dataProviderTestFetchWithConnectionProblem()
+    {
+        return [
+            [[new Response(503)]],
+            [[new Response(500)]],
+            [[new Response(404)]],
+            [[new Response(403)]],
+            [[new Response(401)]],
+            [[]]
+        ];
     }
 }
