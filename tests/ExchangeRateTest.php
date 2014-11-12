@@ -28,7 +28,7 @@ class ExchangeRateTest extends PHPUnit_Framework_TestCase
         $rates = $exchangeRate->getUpdates();
 
         $this->assertInternalType('array', $rates);
-        $this->assertContainsOnlyInstancesOf(Domain\RateInterface::class, $rates);
+        $this->assertContainsOnlyInstancesOf('\Kuartet\BI\Domain\RateInterface', $rates);
         $this->assertCount(22, $rates);
 
         $rate = $rates[$index];
