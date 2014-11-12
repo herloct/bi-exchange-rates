@@ -1,13 +1,11 @@
 <?php
 namespace Kuartet\BI;
 
-use \Carbon\Carbon;
-use \Kuartet\BI\Domain\Rate;
 use \Kuartet\BI\Domain\RateInterface;
 use \Kuartet\BI\Fetcher\Exception\ConnectionException;
 use \Kuartet\BI\Fetcher\FetcherInterface;
-use \RuntimeException;
-use \Symfony\Component\DomCrawler\Crawler;
+use \Kuartet\BI\Parser\Exception\ParseException;
+use \Kuartet\BI\Parser\ParserInterface;
 
 /**
  * Fetch and Parse exchange rates from Bank Indonesia
@@ -27,13 +25,20 @@ class ExchangeRate
     private $fetcher;
 
     /**
+     * @var ParserInterface
+     */
+    private $parser;
+
+    /**
      * Constructor
      *
      * @param FetcherInterface $fetcher URL fetcher
+     * @param ParserInterface $parser HTML parser
      */
-    public function __construct(FetcherInterface $fetcher)
+    public function __construct(FetcherInterface $fetcher, ParserInterface $parser)
     {
         $this->fetcher = $fetcher;
+        $this->parser = $parser;
     }
 
     /**
@@ -41,107 +46,16 @@ class ExchangeRate
      *
      * @return RateInterface[]     List of exchange rates
      * @throws ConnectionException Connection Error
-     * @throws RuntimeException    Page not found
+     * @throws ParseException      Invalid HTML structure
      */
     public function getUpdates()
     {
         $html = $this->fetcher
             ->fetch(self::BASE_URL);
 
-        $exchangeRates = $this->parse($html);
+        $exchangeRates = $this->parser
+            ->parse($html);
 
         return $exchangeRates;
-    }
-
-    /**
-     * Parse html response into exchange rates
-     *
-     * @param  string                 $html
-     * @return RateInterface[]
-     * @throws RuntimeException       Page not found
-     */
-    protected function parse($html)
-    {
-        $exchangeRates = [];
-
-        if (mb_ereg("Sorry, the page you're looking for is not available", $html) !== false) {
-            throw new \RuntimeException('Page not found', 1);
-        }
-
-        $crawler = new Crawler($html);
-        $codes = $this->parseCurrencyCodeAndNames($crawler);
-        $updatedAt = $this->parseLastUpdated($crawler);
-
-        $that = $this;
-        $crawler->filter('#ctl00_PlaceHolderMain_biWebKursTransaksiBI_GridView2 > tr')
-            ->each(function (Crawler $tr, $i) use ($that, &$exchangeRates, $codes, $updatedAt) {
-                if ($i > 0) {
-                    $parts = [];
-                    $tr->filter('td')->each(function ($td, $j) use (&$parts, $codes) {
-                        $parts[] = $td->text();
-                    });
-
-                    $code = trim($parts[0]);
-                    $name = $codes[$code];
-                    $value = $that->getFloatFromString($parts[1]);
-                    $sell = $that->getFloatFromString($parts[2]) / $value;
-                    $buy = $that->getFloatFromString($parts[3]) / $value;
-                    $exchangeRates[] = new Rate($code, $name, $sell, $buy, $updatedAt);
-                }
-            });
-
-        return $exchangeRates;
-    }
-
-    /**
-     * Find last updated info from html
-     *
-     * @param  Crawler $crawler
-     * @return Carbon
-     */
-    protected function parseLastUpdated(Crawler $crawler)
-    {
-        $raw = $crawler->filter('#ctl00_PlaceHolderMain_biWebKursTransaksiBI_lblUpdate')
-            ->text();
-        $updatedAt = Carbon::parse($raw);
-
-        return $updatedAt;
-    }
-
-    /**
-     * Find array of currency code and name
-     *
-     * @param  Crawler $crawler
-     * @return array   Currency code as key, currency name as value
-     */
-    protected function parseCurrencyCodeAndNames(Crawler $crawler)
-    {
-        $codes = [];
-        $crawler->filter('#KodeSingkatan > div > table > tr')
-            ->each(function (Crawler $tr, $i) use (&$codes) {
-                if ($i > 0) {
-                    $parts = [];
-                    $tr->filter('td')->each(function ($td, $j) use (&$parts) {
-                        $parts[] = $td->text();
-                    });
-
-                    $code = trim($parts[0]);
-                    $name = trim($parts[1]);
-                    $codes[$code] = $name;
-                }
-            });
-
-        return $codes;
-    }
-
-    /**
-     * Parse string to float
-     *
-     * @param  string $source
-     * @return float
-     */
-    protected function getFloatFromString($source)
-    {
-        return floatval(mb_ereg_replace(',', '', $source));
     }
 }
