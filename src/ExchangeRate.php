@@ -1,9 +1,12 @@
 <?php
 namespace Kuartet\BI;
 
+use \GuzzleHttp\Client;
 use \Kuartet\BI\Domain\RateInterface;
 use \Kuartet\BI\Fetcher\Exception\ConnectionException;
 use \Kuartet\BI\Fetcher\FetcherInterface;
+use \Kuartet\BI\Fetcher\GuzzleFetcher;
+use \Kuartet\BI\Parser\DomCrawlerParser;
 use \Kuartet\BI\Parser\Exception\ParseException;
 use \Kuartet\BI\Parser\ParserInterface;
 
@@ -25,20 +28,67 @@ class ExchangeRate
     private $fetcher;
 
     /**
+     * Get URL fetcher
+     *
+     * @return FetcherInterface
+     */
+    public function getFetcher()
+    {
+        if (! $this->fetcher) {
+            $client = new Client();
+            $fetcher = new GuzzleFetcher($client);
+
+            $this->setFetcher($fetcher);
+        }
+
+        return $this->fetcher;
+    }
+
+    /**
+     * Set URL fetcher
+     *
+     * @param FetcherInterface $fetcher URL fetcher
+     * @return ExchangeRate
+     */
+    public function setFetcher(FetcherInterface $fetcher)
+    {
+        $this->fetcher = $fetcher;
+
+        return $this;
+    }
+
+    /**
      * @var ParserInterface
      */
     private $parser;
 
     /**
-     * Constructor
+     * Get HTML parser
      *
-     * @param FetcherInterface $fetcher URL fetcher
-     * @param ParserInterface  $parser  HTML parser
+     * @return ParserInterface
      */
-    public function __construct(FetcherInterface $fetcher, ParserInterface $parser)
+    public function getParser()
     {
-        $this->fetcher = $fetcher;
+        if (! $this->parser) {
+            $parser = new DomCrawlerParser();
+
+            $this->setParser($parser);
+        }
+
+        return $this->parser;
+    }
+
+    /**
+     * Set HTML parser
+     *
+     * @param ParserInterface $parser HTML parser
+     * @return ExchangeRate
+     */
+    public function setParser(ParserInterface $parser)
+    {
         $this->parser = $parser;
+
+        return $this;
     }
 
     /**
@@ -50,10 +100,10 @@ class ExchangeRate
      */
     public function getUpdates()
     {
-        $html = $this->fetcher
+        $html = $this->getFetcher()
             ->fetch(self::BASE_URL);
 
-        $exchangeRates = $this->parser
+        $exchangeRates = $this->getParser()
             ->parse($html);
 
         return $exchangeRates;
