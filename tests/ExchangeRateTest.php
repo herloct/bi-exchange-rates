@@ -17,14 +17,14 @@ class ExchangeRateTest extends PHPUnit_Framework_TestCase
     {
         $responseBody = file_get_contents(__DIR__.'/resources/finder_findAll.html');
 
-        $mock = new Mock([
-            new Response(200, [], Stream::factory($responseBody))
-        ]);
+        $fetcher = $this->getMockBuilder('\Kuartet\BI\Fetcher\FetcherInterface')
+            ->getMock();
 
-        $client = new Client();
-        $client->getEmitter()->attach($mock);
+        $fetcher->expects($this->once())
+            ->method('fetch')
+            ->willReturn($responseBody);
 
-        $exchangeRate = new ExchangeRate($client);
+        $exchangeRate = new ExchangeRate($fetcher);
         $rates = $exchangeRate->getUpdates();
 
         $this->assertInternalType('array', $rates);
@@ -56,41 +56,14 @@ class ExchangeRateTest extends PHPUnit_Framework_TestCase
     {
         $responseBody = file_get_contents(__DIR__.'/resources/finder_findAll_not_found.html');
 
-        $mock = new Mock([
-            new Response(200, [], Stream::factory($responseBody))
-        ]);
+        $fetcher = $this->getMockBuilder('\Kuartet\BI\Fetcher\FetcherInterface')
+            ->getMock();
 
-        $client = new Client();
-        $client->getEmitter()->attach($mock);
+        $fetcher->expects($this->once())
+            ->method('fetch')
+            ->willReturn($responseBody);
 
-        $exchangeRate = new ExchangeRate($client);
+        $exchangeRate = new ExchangeRate($fetcher);
         $exchangeRate->getUpdates();
-    }
-
-    /**
-     * @dataProvider dataProviderTestGetUpdatesWithConnectionProblem
-     * @expectedException \RuntimeException
-     */
-    public function testGetUpdatesWithConnectionProblem($responses)
-    {
-        $mock = new Mock($responses);
-
-        $client = new Client();
-        $client->getEmitter()->attach($mock);
-
-        $exchangeRate = new ExchangeRate($client);
-        $exchangeRate->getUpdates();
-    }
-
-    public function dataProviderTestGetUpdatesWithConnectionProblem()
-    {
-        return [
-            [[new Response(503)]],
-            [[new Response(500)]],
-            [[new Response(404)]],
-            [[new Response(403)]],
-            [[new Response(401)]],
-            [[]]
-        ];
     }
 }
