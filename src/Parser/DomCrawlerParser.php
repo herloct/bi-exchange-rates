@@ -31,9 +31,12 @@ class DomCrawlerParser implements ParserInterface
             $codes = $this->parseCurrencyCodeAndNames($crawler);
             $updatedAt = $this->parseLastUpdated($crawler);
 
-            $that = $this;
+            // ugh ugly patch because HHVM can't access private method inside closure
+            $parseFloat = function($source) {
+                return floatval(mb_ereg_replace(',', '', $source));
+            };
             $crawler->filter('#ctl00_PlaceHolderMain_biWebKursTransaksiBI_GridView2 > tr')
-                ->each(function (Crawler $tr, $i) use ($that, &$exchangeRates, $codes, $updatedAt) {
+                ->each(function (Crawler $tr, $i) use (&$exchangeRates, $codes, $parseFloat, $updatedAt) {
                     if ($i > 0) {
                         $parts = [];
                         $tr->filter('td')->each(function ($td, $j) use (&$parts, $codes) {
@@ -42,9 +45,9 @@ class DomCrawlerParser implements ParserInterface
 
                         $code = trim($parts[0]);
                         $name = $codes[$code];
-                        $value = $that->parseFloat($parts[1]);
-                        $sell = $that->parseFloat($parts[2]) / $value;
-                        $buy = $that->parseFloat($parts[3]) / $value;
+                        $value = $parseFloat($parts[1]);
+                        $sell = $parseFloat($parts[2]) / $value;
+                        $buy = $parseFloat($parts[3]) / $value;
                         $exchangeRates[] = new Rate($code, $name, $sell, $buy, $updatedAt);
                     }
                 });
@@ -94,16 +97,5 @@ class DomCrawlerParser implements ParserInterface
         $updatedAt = Carbon::parse($raw);
 
         return $updatedAt;
-    }
-
-    /**
-     * Parse string to float
-     *
-     * @param  string $source
-     * @return float
-     */
-    private function parseFloat($source)
-    {
-        return floatval(mb_ereg_replace(',', '', $source));
     }
 }
