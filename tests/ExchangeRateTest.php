@@ -7,6 +7,18 @@ use \PHPUnit_Framework_TestCase;
 
 class ExchangeRateTest extends PHPUnit_Framework_TestCase
 {
+    public function testGetFetcher()
+    {
+        $exchangeRate = new ExchangeRate();
+        $this->assertInstanceOf('\Kuartet\BI\Fetcher\GuzzleFetcher', $exchangeRate->getFetcher());
+    }
+
+    public function testGetParser()
+    {
+        $exchangeRate = new ExchangeRate();
+        $this->assertInstanceOf('\Kuartet\BI\Parser\DomCrawlerParser', $exchangeRate->getParser());
+    }
+
     public function testGetUpdates()
     {
         $responseBody = 'somehtmlcontent';
