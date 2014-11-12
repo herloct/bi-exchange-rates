@@ -2,8 +2,10 @@
 namespace Kuartet\BI;
 
 use \Carbon\Carbon;
-use \GuzzleHttp\ClientInterface;
-use \GuzzleHttp\Exception\TransferException;
+use \Kuartet\BI\Domain\Rate;
+use \Kuartet\BI\Domain\RateInterface;
+use \Kuartet\BI\Fetcher\Exception\ConnectionException;
+use \Kuartet\BI\Fetcher\FetcherInterface;
 use \RuntimeException;
 use \Symfony\Component\DomCrawler\Crawler;
 
@@ -20,38 +22,31 @@ class ExchangeRate
     const BASE_URL = 'http://www.bi.go.id/en/moneter/informasi-kurs/transaksi-bi/Default.aspx';
 
     /**
-     *
-     * @var ClientInterface
+     * @var FetcherInterface
      */
-    private $client;
+    private $fetcher;
 
     /**
+     * Constructor
      *
-     * @param ClientInterface $client Guzzle client
+     * @param FetcherInterface $fetcher URL fetcher
      */
-    public function __construct(ClientInterface $client)
+    public function __construct(FetcherInterface $fetcher)
     {
-        $this->client = $client;
+        $this->fetcher = $fetcher;
     }
 
     /**
      * Fetch and parse Bank Indonesia site for Exchange rates
      *
-     * @return Domain\RateInterface[] List of exchange rates
-     * @throws RuntimeException       Connection Error
-     * @throws RuntimeException       Page not found
+     * @return RateInterface[]     List of exchange rates
+     * @throws ConnectionException Connection Error
+     * @throws RuntimeException    Page not found
      */
     public function getUpdates()
     {
-        $html = null;
-
-        try {
-            $response = $this->client->get(self::BASE_URL);
-
-            $html = (string) $response->getBody();
-        } catch (TransferException $ex) {
-            throw new RuntimeException('Connection problem', 0, $ex);
-        }
+        $html = $this->fetcher
+            ->fetch(self::BASE_URL);
 
         $exchangeRates = $this->parse($html);
 
@@ -62,7 +57,7 @@ class ExchangeRate
      * Parse html response into exchange rates
      *
      * @param  string                 $html
-     * @return Domain\RateInterface[]
+     * @return RateInterface[]
      * @throws RuntimeException       Page not found
      */
     protected function parse($html)
@@ -91,7 +86,7 @@ class ExchangeRate
                     $value = $that->getFloatFromString($parts[1]);
                     $sell = $that->getFloatFromString($parts[2]) / $value;
                     $buy = $that->getFloatFromString($parts[3]) / $value;
-                    $exchangeRates[] = new Domain\Rate($code, $name, $sell, $buy, $updatedAt);
+                    $exchangeRates[] = new Rate($code, $name, $sell, $buy, $updatedAt);
                 }
             });
 
