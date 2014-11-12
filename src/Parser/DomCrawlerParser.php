@@ -39,7 +39,7 @@ class DomCrawlerParser implements ParserInterface
                 ->each(function (Crawler $tr, $i) use (&$exchangeRates, $codes, $parseFloat, $updatedAt) {
                     if ($i > 0) {
                         $parts = [];
-                        $tr->filter('td')->each(function ($td, $j) use (&$parts, $codes) {
+                        $tr->filter('td')->each(function ($td) use (&$parts, $codes) {
                             $parts[] = $td->text();
                         });
 
@@ -71,7 +71,7 @@ class DomCrawlerParser implements ParserInterface
             ->each(function (Crawler $tr, $i) use (&$codes) {
                 if ($i > 0) {
                     $parts = [];
-                    $tr->filter('td')->each(function ($td, $j) use (&$parts) {
+                    $tr->filter('td')->each(function ($td) use (&$parts) {
                         $parts[] = $td->text();
                     });
 
