@@ -2,10 +2,6 @@
 namespace Kuartet\BI;
 
 use \Carbon\Carbon;
-use \GuzzleHttp\Client;
-use \GuzzleHttp\Message\Response;
-use \GuzzleHttp\Stream\Stream;
-use \GuzzleHttp\Subscriber\Mock;
 use \PHPUnit_Framework_TestCase;
 
 class ExchangeRateTest extends PHPUnit_Framework_TestCase
