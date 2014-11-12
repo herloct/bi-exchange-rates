@@ -1,6 +1,6 @@
 # BI Exchange Rates
 
-[![Build Status](https://travis-ci.org/herloct/bi-exchange-rates.svg?branch=develop)](https://travis-ci.org/herloct/bi-exchange-rates) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/herloct/bi-exchange-rates/badges/quality-score.png?b=develop)](https://scrutinizer-ci.com/g/herloct/bi-exchange-rates/?branch=develop)
+[![Build Status](https://scrutinizer-ci.com/g/herloct/bi-exchange-rates/badges/build.png?b=develop)](https://scrutinizer-ci.com/g/herloct/bi-exchange-rates/build-status/develop) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/herloct/bi-exchange-rates/badges/quality-score.png?b=develop)](https://scrutinizer-ci.com/g/herloct/bi-exchange-rates/?branch=develop) [![Code Coverage](https://scrutinizer-ci.com/g/herloct/bi-exchange-rates/badges/coverage.png?b=develop)](https://scrutinizer-ci.com/g/herloct/bi-exchange-rates/?branch=develop)
 
 Bank Indonesia exchange rates wrapper for PHP.
 
