@@ -16,8 +16,8 @@ class ParseException extends RuntimeException
     /**
      * Constructor
      *
-     * @param string    $message  Exception message
-     * @param Exception $previous Previous exception
+     * @param string         $message  Exception message
+     * @param null|Exception $previous Previous exception
      */
     public function __construct($message, Exception $previous = null)
     {
